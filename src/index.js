@@ -50,7 +50,7 @@ async function onSearch(e) {
         Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
     console.log(error.message);
         } 
-      e.target.reset();  
+      // e.target.reset();  
 };
 
 async function onLoad() {  
@@ -73,8 +73,9 @@ function resetRenderGallery() {
 function createImageEl(hits) {
 //  console.log(hits);
     const markup = hits.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => {
-            return `
-          <a href="${largeImageURL}" class="photo-card">
+      return `
+            <div class="photo-card">
+          <a href="${largeImageURL}" class="gallery__link">
            <img src="${webformatURL}" alt="${tags}" loading = "lazy"  class="photo-image" />
            <div class="info" style= "display: flex">
               <p class="info-item">
@@ -90,7 +91,8 @@ function createImageEl(hits) {
                 <b>Downloads: </b>${downloads}
               </p>
             </div>
-             </a> `;
+             </a>
+             </div>`;
         })
         .join('');
     refs.container.insertAdjacentHTML('beforeend', markup);
@@ -100,10 +102,12 @@ function createImageEl(hits) {
 };
 
 function scroll() {
-    const { height: cardHeight } = document.querySelector('.gallery').firstElementChild.getBoundingClientRect();
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
     
     window.scrollBy({
-        top: cardHeight * 1,
+        top: cardHeight * 2,
         behavior: 'smooth',
     });
 };
