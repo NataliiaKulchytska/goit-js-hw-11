@@ -53,7 +53,7 @@ async function onSearch(e) {
                 data: { hits,  totalHits },
             } = response;
           resetRenderGallery();
-    // minTotalHits(hits); 
+  
      
   if (hits.length === 0) {
              return   Notiflix.Notify.failure(
@@ -79,20 +79,15 @@ async function minTotalHits() {
   } = response;
 
 
-  const totalPerPage = parseInt(`${totalHits}` / success);
-  //  console.log('111',totalPerPage);
-  
-  // console.log('333', success)
+  const totalPerPage = parseInt(`${totalHits}` / success);  
  
   if (page >= totalPerPage) {  
     
     hideButton();
    Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
     return;       
-  }    showButton();
-  
- 
-
+  }
+  showButton();
 }
 
 async function onLoad() {  
