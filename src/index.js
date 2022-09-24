@@ -7,51 +7,93 @@ import { getRefs } from './js/getRefs';
 import  NewsApiService  from './js/createAPI';
 
 
+function simpleLightbox() {
+  let lightbox = new SimpleLightbox('.gallery a', {
+   
+    captionsData: 'alt',
+    captionDelay: 250,
+   navText: ['←','→'],
+    widthRatio: 0.9,
+    heightRatio: 1,
+    fadeSpeed: 300,
+    spinner: true,
+  });
+  lightbox.refresh();
+};
+
 const refs = getRefs();
 const newsApiService = new NewsApiService;
 const success = newsApiService.perPage;
+const page = newsApiService.page;
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadMoreBtn.addEventListener('click', onLoad);
-refs.loadMoreBtn.classList.add('is-hidden');
+
+hideButton();
 
 async function onSearch(e) {
     e.preventDefault();
 
     if (!refs.loadMoreBtn.classList.contains('is-hidden')) {
 
-         refs.loadMoreBtn.classList.add('is-hidden');
+      hideButton;
     };
      newsApiService.searchQuery = e.currentTarget.elements.searchQuery.value;
     newsApiService.resetPage();
 
-    try {
+  try {
+     
         if (newsApiService.searchQuery === '') {
             resetRenderGallery();
-          Notiflix.Notify.warning('Enter your search query');
+         return Notiflix.Notify.warning('Enter your search query');
         }
-        else {
+        
           const response = await newsApiService.createAPI();
             const {
-                data: { hits, total, totalHits },
+                data: { hits,  totalHits },
             } = response;
           resetRenderGallery();
-          
+    // minTotalHits(hits); 
+     
   if (hits.length === 0) {
-                Notiflix.Notify.failure(
+             return   Notiflix.Notify.failure(
                     'Sorry, there are no images matching your search query. Please try again.');
-            } else {   
-              refs.loadMoreBtn.classList.remove('is-hidden');
-                Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+            }    
+      showButton();
+      Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+         minTotalHits(hits);        
               createImageEl(hits);          
-            }
-        }
+          
+        
     } catch (error) {
-        Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
-    console.log(error.message);
+       
+    console.log(error);
         } 
       // e.target.reset();  
 };
+async function minTotalHits() {
+
+  const response = await newsApiService.createAPI();
+            const {
+                data: {totalHits },
+  } = response;
+
+
+  const totalPerPage = parseInt(`${totalHits}` / success);
+  //  console.log('111',totalPerPage);
+  
+  // console.log('333', success)
+ 
+  if (page >= totalPerPage) {  
+    
+    hideButton();
+   Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
+    return;       
+  }    showButton();
+  
+ 
+
+}
 
 async function onLoad() {  
     
@@ -61,8 +103,10 @@ async function onLoad() {
     } = response;
 
     if (hits.length === 0) {
-       Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-  } else createImageEl(hits);      
+     return  Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+  }
+  createImageEl(hits); 
+  
 };
 
 function resetRenderGallery() {
@@ -99,8 +143,15 @@ function createImageEl(hits) {
     
   simpleLightbox();
   scroll();
+    // lightbox.refresh('show.simpleLightbox');
+};
+function showButton() {
+    refs.loadMoreBtn.classList.remove("is-hidden");
 };
 
+function hideButton() {
+    refs.loadMoreBtn.classList.add("is-hidden");
+};
 function scroll() {
   const { height: cardHeight } = document
     .querySelector('.gallery')
@@ -110,18 +161,4 @@ function scroll() {
         top: cardHeight * 2,
         behavior: 'smooth',
     });
-};
-
-function simpleLightbox() {
-  let lightbox = new SimpleLightbox('.gallery a', {
-   
-    captionsData: 'alt',
-    captionDelay: 250,
-   navText: ['←','→'],
-    widthRatio: 0.9,
-    heightRatio: 1,
-    fadeSpeed: 300,
-    spinner: true,
-  });
-  lightbox.refresh();
 };

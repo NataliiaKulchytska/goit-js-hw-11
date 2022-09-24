@@ -3,6 +3,7 @@ const axios = require('axios');
 const BASE_URL = 'https://pixabay.com/api';
 const API_KEY = '29925020-cfe857fa031190d672dc0ee2f';
 
+
 export default class NewsApiService {
   constructor() {
     this.searchQuery = '';
@@ -24,7 +25,8 @@ export default class NewsApiService {
     this.stepPage();
     return await axios.get(url);
     
-  }
+  };
+
   stepPage() {
     this.page += 1;
   };
