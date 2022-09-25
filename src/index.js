@@ -79,7 +79,7 @@ async function minTotalHits() {
   } = response;
 
 
-  const totalPerPage = parseInt(`${totalHits}` / success);  
+  const totalPerPage = Math.ceil(`${totalHits}` / success);  
  
   if (page >= totalPerPage) {  
     
